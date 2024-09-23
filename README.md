@@ -7,7 +7,7 @@
 ### Vercel - Acompanhe em tempo real como está ficando o projeto
 
 ```
-pageboxfront.vercel.app
+pageboxfront01.vercel.app
 ```
 
 ### Docker - Criar a imagem do projeto
