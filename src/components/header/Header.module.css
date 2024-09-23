@@ -1,0 +1,85 @@
+/* Estilos gerais do header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #0061ff;
+  color: white;
+}
+
+/* Estilo para o título do header */
+.header-title {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  gap: 40px;
+}
+
+/* Imagem ao lado do título */
+.header-title::before {
+  content: url("/src/assets/box-header-1.svg");
+  width: 1.5rem;
+  height: 3.5rem;
+  display: inline-block;
+}
+
+/* Estilos do botão de navegação */
+.navButton {
+  background-color: #ffffff;
+  color: #0061ff;
+  border: 2px solid #0061ff; /* Cor da borda azul */
+  padding: 0.5rem 1rem; /* Espaçamento interno */
+  font-size: 1rem; /* Tamanho da fonte */
+  font-weight: bold;
+  border-radius: 5px; /* Bordas arredondadas */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Suaviza a transição */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botão com hover */
+.navButton:hover {
+  background-color: #f0f0f0; /* Muda o fundo ao passar o mouse */
+  border-color: #004ecc; /* Muda a cor da borda no hover */
+  color: #387deb; /* Muda a cor do texto no hover */
+}
+
+/* Efeito de sombra ao clicar */
+.navButton:active {
+  transform: translateY(
+    2px
+  ); /* Move o botão levemente para baixo ao ser clicado */
+}
+
+/* Dropdown de navegação */
+.dropdown {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  padding: 10px;
+  list-style: none;
+  z-index: 100;
+  min-width: 150px;
+}
+
+/* Estilo dos itens do dropdown */
+.dropdownItem {
+  color: rgb(11, 55, 199);
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  font-weight: bold;
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}

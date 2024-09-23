@@ -1,9 +1,12 @@
 import styles from "./Detail.module.css";
+import { useParams } from "react-router-dom";
 
 export function Detail() {
+  const { id } = useParams(); // Captura o parâmetro da URL
+
   return (
     <div>
-      <h1>Detail</h1>
+      <h1>Detalhes: {id}</h1>
     </div>
   );
 }
