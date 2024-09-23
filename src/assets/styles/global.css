@@ -1,0 +1,73 @@
+/* Reset básico e estilos globais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: sans-serif;
+}
+
+/* Layout principal da página */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header,
+nav,
+aside,
+section,
+article,
+footer {
+  padding: 1rem;
+}
+
+header,
+nav,
+footer {
+  text-align: center;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  margin-top: auto; /* Fixa o footer no final da página */
+}
+
+/* Área principal (conteúdo + aside) */
+.content {
+  display: flex;
+  flex: 1; /* Faz o conteúdo crescer para ocupar o espaço restante */
+}
+
+aside {
+  width: 250px;
+  border: 1px solid black;
+  transition: width 0.3s ease;
+  min-height: calc(100vh - 160px); /* Altura menos header e footer */
+}
+
+aside.minimized {
+  width: 60px;
+}
+
+/* Área de conteúdo principal */
+.section-content {
+  flex: 1;
+}
+
+/* Estilos para dispositivos menores */
+@media (max-width: 768px) {
+  aside {
+    display: none;
+  }
+
+  .section-content {
+    flex: 1;
+  }
+}
