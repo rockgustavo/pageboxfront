@@ -6,6 +6,7 @@ interface File {
   id: number;
   name: string;
   content: string;
+  directory: { id: number }; // Ajustado para enviar apenas o id do diretório
 }
 
 interface DirectoryDTO {
@@ -84,7 +85,7 @@ export function Home() {
     try {
       await axios.delete(`http://localhost:8080/api/diretorio/${folderId}`);
       setDeleteFolderId(null);
-      loadDirectories(); // Atualiza a lista de diretórios
+      loadDirectories();
     } catch (error) {
       console.error("Erro ao deletar diretório:", error);
     }
@@ -102,6 +103,7 @@ export function Home() {
           confirmDeleteFolder={confirmDeleteFolder}
           handleAddSubFolder={handleAddSubFolder}
           renderSubDirectories={renderSubDirectories}
+          loadDirectories={loadDirectories}
         />
       ));
   };
@@ -143,10 +145,12 @@ export function Home() {
               confirmDeleteFolder={confirmDeleteFolder}
               handleAddSubFolder={handleAddSubFolder}
               renderSubDirectories={renderSubDirectories}
+              loadDirectories={loadDirectories}
             />
           ))}
       </div>
 
+      {/* Modal de Confirmação para Deletar Pasta */}
       {deleteFolderId && (
         <div className={styles["delete-confirmation"]}>
           <p>Tem certeza que deseja excluir esta pasta?</p>
@@ -168,6 +172,7 @@ function DirectoryItem({
   confirmDeleteFolder,
   handleAddSubFolder,
   renderSubDirectories,
+  loadDirectories,
 }: {
   directory: DirectoryDTO;
   expandedDirectories: number[];
@@ -175,8 +180,58 @@ function DirectoryItem({
   confirmDeleteFolder: (id: number) => void;
   handleAddSubFolder: (parentId: number) => void;
   renderSubDirectories: (parentId: number) => JSX.Element[];
+  loadDirectories: () => void;
 }) {
   const isExpanded = expandedDirectories.includes(directory.id!);
+  const [fileToEdit, setFileToEdit] = useState<File | null>(null);
+  const [newFileName, setNewFileName] = useState<string>("");
+  const [newFileContent, setNewFileContent] = useState<string>("");
+  const [deleteFileId, setDeleteFileId] = useState<number | null>(null);
+
+  const handleEditFile = (file: File) => {
+    setFileToEdit(file);
+    setNewFileName(file.name);
+    setNewFileContent(file.content);
+  };
+
+  const saveEditedFile = async () => {
+    if (!fileToEdit) return;
+
+    const updatedFile = {
+      id: fileToEdit.id,
+      name: newFileName,
+      content: newFileContent,
+      directory: { id: directory.id! },
+    };
+
+    try {
+      await axios.put(
+        `http://localhost:8080/api/arquivo/${fileToEdit.id}`,
+        updatedFile
+      );
+      loadDirectories();
+      setFileToEdit(null);
+    } catch (error) {
+      console.error("Erro ao atualizar arquivo:", error);
+    }
+  };
+
+  const confirmDeleteFile = () => {
+    if (!fileToEdit) return;
+
+    setDeleteFileId(fileToEdit.id);
+  };
+
+  const deleteFile = async (fileId: number) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/arquivo/${fileId}`);
+      setDeleteFileId(null);
+      loadDirectories();
+      setFileToEdit(null);
+    } catch (error) {
+      console.error("Erro ao deletar arquivo:", error);
+    }
+  };
 
   return (
     <div className={styles["directory-item"]}>
@@ -192,23 +247,76 @@ function DirectoryItem({
         </div>
 
         <div
+          className={styles["file-add"]}
+          style={{
+            cursor: "pointer",
+            margin: "0 10px 10px 0",
+          }}
+          onClick={() => handleAddSubFolder(directory.id!)}
+        />
+        <div
           className={styles["folder-add"]}
+          style={{ cursor: "pointer" }}
           onClick={() => handleAddSubFolder(directory.id!)}
         />
         <div
           className={styles["folder-erase"]}
+          style={{ cursor: "pointer" }}
           onClick={() => confirmDeleteFolder(directory.id!)}
         />
       </div>
+      <hr />
 
       {isExpanded && (
         <div className={styles["directory-content"]}>
           {directory.files?.map((file) => (
-            <div key={file.id} className={styles["file-item"]}>
+            <div
+              key={file.id}
+              className={styles["file-item"]}
+              style={{ cursor: "pointer" }}
+              onClick={() => handleEditFile(file)}
+            >
               <span>{file.name}</span>
             </div>
           ))}
           {renderSubDirectories(directory.id!)} {/* Renderiza subdiretórios */}
+          {fileToEdit && (
+            <div className={styles["edit-file-form"]}>
+              <h2>Editar Arquivo</h2>
+              <label>
+                Nome:
+                <input
+                  className={styles["edit-file-name"]}
+                  type="text"
+                  value={newFileName}
+                  onChange={(e) => setNewFileName(e.target.value)}
+                />
+              </label>
+              <label>
+                Conteúdo:
+                <textarea
+                  className={styles["edit-file-content"]}
+                  value={newFileContent}
+                  onChange={(e) => setNewFileContent(e.target.value)}
+                />
+              </label>
+              <button onClick={saveEditedFile}>Salvar Alterações</button>
+              <button onClick={() => confirmDeleteFile()}>
+                Excluir Arquivo
+              </button>
+              <button onClick={() => setFileToEdit(null)}>Cancelar</button>
+            </div>
+          )}
+          {/* Modal de Confirmação para Deletar Arquivo */}
+          {deleteFileId && (
+            <div className={styles["delete-confirmation"]}>
+              <p>Tem certeza que deseja excluir este arquivo?</p>
+              <button onClick={() => deleteFile(deleteFileId)}>
+                Confirmar
+              </button>
+              <button onClick={() => setDeleteFileId(null)}>Cancelar</button>
+            </div>
+          )}
         </div>
       )}
     </div>
