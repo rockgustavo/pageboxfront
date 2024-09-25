@@ -2,7 +2,7 @@
 
 ## Projeto de diretórios para controle de arquivos
 
-### Front-End - React, Typescript
+### Front-End - React + Typescript
 
 ### Vercel - Acompanhe em tempo real como está ficando o projeto
 

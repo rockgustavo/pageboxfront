@@ -1,0 +1,94 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.folder-add::before {
+  content: url("/src/assets/add-folder.svg");
+}
+.folder-erase::before {
+  content: url("/src/assets/erase-folder.svg");
+}
+.folder-open::before {
+  content: url("/src/assets/folder-open.svg");
+}
+.folder-closed::before {
+  content: url("/src/assets/folder-closed.svg");
+}
+
+.create-folder-root {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.create-folder-root img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.create-folder-form {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.create-folder-form input {
+  margin-right: 10px;
+  padding: 5px;
+  width: 200px;
+}
+
+.directory-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinhando os itens à esquerda */
+  width: 100%; /* Preenche a largura total */
+  padding-left: 20px; /* Espaçamento lateral */
+}
+
+.directory-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espaçamento entre os itens internos */
+  margin-left: 20px; /* Distância para os subdiretórios */
+}
+
+.subdirectory-content {
+  margin-left: 40px; /* Indentação para subpastas */
+}
+
+.directory-item {
+  margin-bottom: 10px;
+}
+
+.file-item {
+  margin-left: 60px; /* Indentação para os arquivos dentro dos diretórios */
+}
+
+.directory-header {
+  display: flex;
+  align-items: center;
+}
+
+.directory-header img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.delete-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
