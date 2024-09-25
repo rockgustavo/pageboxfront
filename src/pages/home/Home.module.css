@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 0px 30px;
 }
 
+.folder-add-top::before {
+  content: url("/src/assets/add-folder-top.svg");
+}
 .folder-add::before {
   content: url("/src/assets/add-folder.svg");
 }
@@ -17,6 +19,9 @@
 }
 .folder-closed::before {
   content: url("/src/assets/folder-closed.svg");
+}
+.file-item::before {
+  content: url("/src/assets/file.svg");
 }
 
 .create-folder-root {
@@ -46,16 +51,15 @@
 .directory-list {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Alinhando os itens à esquerda */
-  width: 100%; /* Preenche a largura total */
-  padding-left: 20px; /* Espaçamento lateral */
+  align-items: flex-start;
+  width: 100%;
 }
 
 .directory-content {
   display: flex;
   flex-direction: column;
   gap: 10px; /* Espaçamento entre os itens internos */
-  margin-left: 20px; /* Distância para os subdiretórios */
+  margin-left: 30px; /* Distância para os subdiretórios */
 }
 
 .subdirectory-content {
@@ -67,12 +71,13 @@
 }
 
 .file-item {
-  margin-left: 60px; /* Indentação para os arquivos dentro dos diretórios */
+  margin-left: 60px;
 }
 
 .directory-header {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
 .directory-header img {

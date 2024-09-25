@@ -43,6 +43,7 @@ export function Home() {
   const handleAddSubFolder = (parentId: number | null) => {
     setShowCreateFolder(true);
     setParentForNewFolder(parentId);
+    setNewFolderName(""); // Limpa o nome da nova pasta ao abrir o pop-up
   };
 
   const createFolder = async () => {
@@ -58,13 +59,11 @@ export function Home() {
 
     try {
       await axios.post("http://localhost:8080/api/diretorio", newDirectory);
-      setNewFolderName("");
-      setShowCreateFolder(false);
-      setParentForNewFolder(null);
-      loadDirectories();
+      loadDirectories(); // Atualiza a lista de diretórios
     } catch (error) {
       console.error("Erro ao criar diretório:", error);
     }
+    setShowCreateFolder(false); // Fecha o pop-up
   };
 
   const toggleFolder = (folderId: number) => {
@@ -85,13 +84,12 @@ export function Home() {
     try {
       await axios.delete(`http://localhost:8080/api/diretorio/${folderId}`);
       setDeleteFolderId(null);
-      loadDirectories();
+      loadDirectories(); // Atualiza a lista de diretórios
     } catch (error) {
       console.error("Erro ao deletar diretório:", error);
     }
   };
 
-  // Função para renderizar subdiretórios de forma recursiva
   const renderSubDirectories = (parentId: number) => {
     return directories
       .filter((dir) => dir.parentDirectory?.id === parentId)
@@ -103,34 +101,37 @@ export function Home() {
           toggleFolder={toggleFolder}
           confirmDeleteFolder={confirmDeleteFolder}
           handleAddSubFolder={handleAddSubFolder}
-          renderSubDirectories={renderSubDirectories} // Passar a função renderSubDirectories
+          renderSubDirectories={renderSubDirectories}
         />
       ));
   };
 
   return (
-    <div className="home">
+    <div className={styles.home}>
       <h1>Gerenciamento de Pastas</h1>
 
-      <div className="create-folder-root">
+      <div className={styles["create-folder-root"]}>
         <div
-          className={styles["folder-add"]}
+          className={styles["folder-add-top"]}
           onClick={() => handleAddSubFolder(null)}
         />
-        {showCreateFolder && (
-          <div className="create-folder-form">
-            <input
-              type="text"
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              placeholder="Nome da nova pasta"
-            />
-            <button onClick={createFolder}>Criar</button>
-          </div>
-        )}
       </div>
 
-      <div className="directory-list">
+      {showCreateFolder && (
+        <div className={styles["delete-confirmation"]}>
+          <p>Digite o nome da nova pasta:</p>
+          <input
+            type="text"
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            placeholder="Nome da nova pasta"
+          />
+          <button onClick={createFolder}>Criar</button>
+          <button onClick={() => setShowCreateFolder(false)}>Cancelar</button>
+        </div>
+      )}
+
+      <div className={styles["directory-list"]}>
         {directories
           .filter((dir) => dir.parentDirectory === null)
           .map((dir) => (
@@ -147,7 +148,7 @@ export function Home() {
       </div>
 
       {deleteFolderId && (
-        <div className="delete-confirmation">
+        <div className={styles["delete-confirmation"]}>
           <p>Tem certeza que deseja excluir esta pasta?</p>
           <button onClick={() => deleteFolder(deleteFolderId)}>
             Confirmar
@@ -166,20 +167,20 @@ function DirectoryItem({
   toggleFolder,
   confirmDeleteFolder,
   handleAddSubFolder,
-  renderSubDirectories, // Adiciona renderSubDirectories como uma propriedade
+  renderSubDirectories,
 }: {
   directory: DirectoryDTO;
   expandedDirectories: number[];
   toggleFolder: (id: number) => void;
   confirmDeleteFolder: (id: number) => void;
   handleAddSubFolder: (parentId: number) => void;
-  renderSubDirectories: (parentId: number) => JSX.Element[]; // Definir o tipo de renderSubDirectories
+  renderSubDirectories: (parentId: number) => JSX.Element[];
 }) {
   const isExpanded = expandedDirectories.includes(directory.id!);
 
   return (
-    <div className="directory-item">
-      <div className="directory-header">
+    <div className={styles["directory-item"]}>
+      <div className={styles["directory-header"]}>
         <div
           className={
             isExpanded ? styles["folder-open"] : styles["folder-closed"]
@@ -190,28 +191,23 @@ function DirectoryItem({
           <span>{directory.name}</span>
         </div>
 
-        {/* Botão de adicionar subpasta */}
         <div
           className={styles["folder-add"]}
           onClick={() => handleAddSubFolder(directory.id!)}
         />
-
-        {/* Botão de excluir pasta */}
         <div
           className={styles["folder-erase"]}
           onClick={() => confirmDeleteFolder(directory.id!)}
         />
       </div>
 
-      {/* Renderizar arquivos e subpastas se o diretório estiver expandido */}
       {isExpanded && (
-        <div className="directory-content">
+        <div className={styles["directory-content"]}>
           {directory.files?.map((file) => (
-            <div key={file.id} className="file-item">
+            <div key={file.id} className={styles["file-item"]}>
               <span>{file.name}</span>
             </div>
           ))}
-          {/* Renderizar subpastas */}
           {renderSubDirectories(directory.id!)} {/* Renderiza subdiretórios */}
         </div>
       )}
