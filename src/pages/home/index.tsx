@@ -25,6 +25,10 @@ export function Home() {
   const [parentForNewFolder, setParentForNewFolder] = useState<number | null>(
     null
   );
+  const [showCreateFile, setShowCreateFile] = useState<boolean>(false);
+  const [newFileName, setNewFileName] = useState<string>("");
+  const [newFileContent, setNewFileContent] = useState<string>("");
+  const [parentForNewFile, setParentForNewFile] = useState<number | null>(null);
 
   useEffect(() => {
     loadDirectories();
@@ -64,7 +68,36 @@ export function Home() {
     } catch (error) {
       console.error("Erro ao criar diretório:", error);
     }
-    setShowCreateFolder(false); // Fecha o pop-up
+    setShowCreateFolder(false);
+  };
+
+  const handleAddFile = (parentId: number | null) => {
+    setShowCreateFile(true);
+    setParentForNewFile(parentId);
+    setNewFileName(""); // Limpa o nome e o conteúdo ao abrir o formulário de novo arquivo
+    setNewFileContent("");
+  };
+
+  const createFile = async () => {
+    if (newFileName.trim() === "" || newFileContent.trim() === "") {
+      alert("Nome e conteúdo do arquivo não podem estar em branco.");
+      return;
+    }
+
+    const newFile: File = {
+      id: 0, // o ID será gerado pelo backend
+      name: newFileName,
+      content: newFileContent,
+      directory: { id: parentForNewFile! }, // associando ao diretório pai
+    };
+
+    try {
+      await axios.post("http://localhost:8080/api/arquivo", newFile);
+      loadDirectories(); // Atualiza a lista de diretórios/arquivos
+    } catch (error) {
+      console.error("Erro ao criar arquivo:", error);
+    }
+    setShowCreateFile(false);
   };
 
   const toggleFolder = (folderId: number) => {
@@ -102,6 +135,7 @@ export function Home() {
           toggleFolder={toggleFolder}
           confirmDeleteFolder={confirmDeleteFolder}
           handleAddSubFolder={handleAddSubFolder}
+          handleAddFile={handleAddFile}
           renderSubDirectories={renderSubDirectories}
           loadDirectories={loadDirectories}
         />
@@ -133,6 +167,25 @@ export function Home() {
         </div>
       )}
 
+      {showCreateFile && (
+        <div className={styles["delete-confirmation"]}>
+          <p>Digite o nome e o conteúdo do novo arquivo:</p>
+          <input
+            type="text"
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+            placeholder="Nome do arquivo"
+          />
+          <textarea
+            value={newFileContent}
+            onChange={(e) => setNewFileContent(e.target.value)}
+            placeholder="Conteúdo do arquivo"
+          />
+          <button onClick={createFile}>Criar</button>
+          <button onClick={() => setShowCreateFile(false)}>Cancelar</button>
+        </div>
+      )}
+
       <div className={styles["directory-list"]}>
         {directories
           .filter((dir) => dir.parentDirectory === null)
@@ -144,13 +197,13 @@ export function Home() {
               toggleFolder={toggleFolder}
               confirmDeleteFolder={confirmDeleteFolder}
               handleAddSubFolder={handleAddSubFolder}
+              handleAddFile={handleAddFile}
               renderSubDirectories={renderSubDirectories}
               loadDirectories={loadDirectories}
             />
           ))}
       </div>
 
-      {/* Modal de Confirmação para Deletar Pasta */}
       {deleteFolderId && (
         <div className={styles["delete-confirmation"]}>
           <p>Tem certeza que deseja excluir esta pasta?</p>
@@ -171,6 +224,7 @@ function DirectoryItem({
   toggleFolder,
   confirmDeleteFolder,
   handleAddSubFolder,
+  handleAddFile,
   renderSubDirectories,
   loadDirectories,
 }: {
@@ -179,6 +233,7 @@ function DirectoryItem({
   toggleFolder: (id: number) => void;
   confirmDeleteFolder: (id: number) => void;
   handleAddSubFolder: (parentId: number) => void;
+  handleAddFile: (parentId: number) => void;
   renderSubDirectories: (parentId: number) => JSX.Element[];
   loadDirectories: () => void;
 }) {
@@ -250,9 +305,9 @@ function DirectoryItem({
           className={styles["file-add"]}
           style={{
             cursor: "pointer",
-            margin: "0 10px 10px 0",
+            margin: "0 10px 15px 0",
           }}
-          onClick={() => handleAddSubFolder(directory.id!)}
+          onClick={() => handleAddFile(directory.id!)}
         />
         <div
           className={styles["folder-add"]}
